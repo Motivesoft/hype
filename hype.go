@@ -45,21 +45,20 @@ func main() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("$HOME")
 	viper.SetDefault("Formatter", "terminal16m")
-	viper.SetDefault("Style", "monokai")
+	viper.SetDefault("Style", "github-dark")
 	viper.AddConfigPath(".")
 	err = viper.ReadInConfig()
-	
+
 	// If there's an error or the config doesn't exist, use some defaults
 	if err != nil {
-		log.Fatal(err)
-		return
+		log.Printf("%s", err)
 	}
-	
+
 	// Process the configuration
 	config = new(Config)
 	viper.Unmarshal(config)
 
-	// Print the file through the highlighter 
+	// Print the file through the highlighter
 	err = quick.Highlight(os.Stdout, code, lexer.Config().Name, config.Formatter, config.Style)
 	if err != nil {
 		log.Fatal(err)
