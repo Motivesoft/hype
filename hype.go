@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/quick"
@@ -21,7 +20,6 @@ type Config struct {
 	Lexer     string
 	Formatter string
 	Style     string
-	Trim      bool
 }
 
 func main() {
@@ -44,7 +42,6 @@ func main() {
 	viper.SetDefault("Lexer", "")
 	viper.SetDefault("Formatter", "terminal16m")
 	viper.SetDefault("Style", "monokai")
-	viper.SetDefault("Trim", false)
 
 	// Look for config files. If there's an error other than that the config doesn't exist, report it
 	if err := viper.ReadInConfig(); err != nil {
@@ -90,17 +87,9 @@ func main() {
 	// Treat the input file as a string
 	code := string(binary)
 
-	if config.Trim {
-		code = strings.Trim(code, "\f\t\r\n ")
-	}
-
 	// Print the file through the highlighter
 	err = quick.Highlight(os.Stdout, code, lexer.Config().Name, config.Formatter, config.Style)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	if config.Trim {
-		fmt.Println()
 	}
 }
