@@ -51,7 +51,7 @@ func main() {
 	viper.AddConfigPath(".")
 	viper.SetDefault("Lexer", "")
 	viper.SetDefault("Formatter", "terminal16m")
-	viper.SetDefault("Style", "github-dark")
+	viper.SetDefault("Style", "monokai")
 
 	// Look for config files. If there's an error other than that the config doesn't exist, report it
 	if err = viper.ReadInConfig(); err != nil {
