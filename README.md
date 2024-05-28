@@ -1,5 +1,5 @@
 # hype
-Replacement for the Windows command 'type' that displays text files using syntax highlighting
+Replacement for the Windows command 'type' (Linux 'cat' command) that displays text files using syntax highlighting
 
 ## Background
 The application is written in Go and uses the [Chroma](github.com/alecthomas/chroma/v2) package.
