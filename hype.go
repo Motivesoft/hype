@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/spf13/viper"
 )
+
+var version string
 
 var config *Config
 
@@ -23,6 +26,10 @@ func main() {
 	// Check the arguments
 	if len(os.Args) <= 1 {
 		log.Fatal("Missing filename")
+	}
+
+	if os.Args[1] == "--version" || os.Args[1] == "-v" {
+		fmt.Printf("Version %s\n", version)
 		return
 	}
 
