@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/quick"
@@ -20,6 +21,7 @@ type Config struct {
 	Lexer     string
 	Formatter string
 	Style     string
+	Trim      bool
 }
 
 func main() {
@@ -33,16 +35,6 @@ func main() {
 		return
 	}
 
-	// Read the file
-	binary, err := os.ReadFile(os.Args[1])
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	// Treat the input file as a string
-	code := string(binary)
-
 	// Load the config, looking for a config file in the install location, the home dir and the current location
 	viper.SetConfigName(".hype")
 	viper.SetConfigType("yaml")
@@ -52,9 +44,10 @@ func main() {
 	viper.SetDefault("Lexer", "")
 	viper.SetDefault("Formatter", "terminal16m")
 	viper.SetDefault("Style", "monokai")
+	viper.SetDefault("Trim", false)
 
 	// Look for config files. If there's an error other than that the config doesn't exist, report it
-	if err = viper.ReadInConfig(); err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore this and just use our defaults
 		} else {
@@ -75,23 +68,39 @@ func main() {
 			lexer = lexers.Get(config.Lexer)
 		}
 
-		// What if we still have nothing
+		// What if we still have nothing? Treat the file as plain
 		if lexer == nil {
-			// We could use the standard fallback lexer, but probably better to just output the file as plain text
-			//lexer = lexers.Fallback
-			os.Stdout.WriteString(code)
-			return
+			// Use the standard fallback lexer, but output as plain text with the "noop" formatter
+			lexer = lexers.Fallback
+			config.Formatter = "noop"
 		}
 	}
 
-	// Include "fmt" to use these debug statements
-	// fmt.Printf("lexer: %s\n", lexer.Config().Name)
-	// fmt.Printf("formatter: %s\n", config.Formatter)
-	// fmt.Printf("style: %s\n", config.Style)
+	//fmt.Printf("lexer: %s\n", lexer.Config().Name)
+	//fmt.Printf("formatter: %s\n", config.Formatter)
+	//fmt.Printf("style: %s\n", config.Style)
+
+	// Read the file
+	binary, err := os.ReadFile(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	// Treat the input file as a string
+	code := string(binary)
+
+	if config.Trim {
+		code = strings.Trim(code, "\f\t\r\n ")
+	}
 
 	// Print the file through the highlighter
 	err = quick.Highlight(os.Stdout, code, lexer.Config().Name, config.Formatter, config.Style)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if config.Trim {
+		fmt.Println()
 	}
 }
