@@ -14,6 +14,7 @@ import (
 var config *Config
 
 type Config struct {
+	Lexer     string
 	Formatter string
 	Style     string
 }
@@ -35,23 +36,13 @@ func main() {
 	// Treat the input file as a string
 	code := string(binary)
 
-	// Find out its lexer
-	lexer := lexers.Match(os.Args[1])
-	if lexer == nil {
-		// Use the fallback lexer? Not sure - it is likely to make a mess of the output
-		//lexer = lexers.Fallback
-
-		// Instead, as we don't understand the filetype, output the file as plain text
-		os.Stdout.WriteString(code)
-		return
-	}
-
 	// Load the config, looking for a config file in the install location, the home dir and the current location
 	viper.SetConfigName(".hype")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(filepath.Dir(os.Args[0]))
 	viper.AddConfigPath("$HOME")
 	viper.AddConfigPath(".")
+	viper.SetDefault("Lexer", "")
 	viper.SetDefault("Formatter", "terminal16m")
 	viper.SetDefault("Style", "github-dark")
 	err = viper.ReadInConfig()
@@ -64,6 +55,23 @@ func main() {
 	// Process the configuration
 	config = new(Config)
 	viper.Unmarshal(config)
+
+	// Find out which lexer to use - firstly by checking the filename
+	lexer := lexers.Match(os.Args[1])
+	if lexer == nil {
+		// Use a fallback lexer specified in configuration?
+		if config.Lexer != "" {
+			lexer = lexers.Get(config.Lexer)
+		}
+
+		// What if we still have nothing
+		if lexer == nil {
+			// We could use the standard fallback lexer, but probably better to just output the file as plain text
+			//lexer = lexers.Fallback
+			os.Stdout.WriteString(code)
+			return
+		}
+	}
 
 	// Include "fmt" to use these debug statements
 	// fmt.Printf("lexer: %s\n", lexer.Config().Name)
