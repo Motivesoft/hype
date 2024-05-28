@@ -45,5 +45,6 @@ In the future, we could consider the following:
 * Stop using the 'quick' highlight technique
 * Find a way to process the file incrementally to avoid 'large file' issues
 * Full versioninfo stuff on Windows exe, with a nice icon
-* Some sort of 'more'
-* Seed version info from git tag, if possible on all platforms
+* Some sort of 'more' capability
+* Other options from 'cat'
+* Seed version info from git tag, if possible on all platforms or by building for all platforms on Linux
