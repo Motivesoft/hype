@@ -37,6 +37,23 @@ hype.exe [filename] | more
 ./hype --version
 ```
 
+###
+A configuration file called `.hype` in either of the following locations:
+* Executable directory
+* Home directory
+* Current directory
+
+The configuration file is YAML and takes the following form:
+```yaml
+Style: monokai
+```
+
+Formatter and a default Lexer (in the event one cannot be inferred from the filename) can also be specified, but the need for this is unlikely.
+```yaml
+Formatter: terminal16m
+Lexer: markdown
+``` 
+
 ## Suggestions
 In the future, we could consider the following:
 * Simplify this right down to reduce imports
@@ -48,3 +65,4 @@ In the future, we could consider the following:
 * Some sort of 'more' capability
 * Other options from 'cat'
 * Seed version info from git tag, if possible on all platforms or by building for all platforms on Linux
+* Multiple files on the command line, output one by one
