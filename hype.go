@@ -52,11 +52,15 @@ func main() {
 	viper.SetDefault("Lexer", "")
 	viper.SetDefault("Formatter", "terminal16m")
 	viper.SetDefault("Style", "github-dark")
-	err = viper.ReadInConfig()
 
-	// If there's an error or the config doesn't exist, use some defaults
-	if err != nil {
-		log.Printf("%s", err)
+	// Look for config files. If there's an error other than that the config doesn't exist, report it
+	if err = viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore this and just use our defaults
+		} else {
+			// Config file was found but another error was produced
+			log.Print(err)
+		}
 	}
 
 	// Process the configuration
