@@ -18,12 +18,32 @@ The initial design is simple.
 go run . [filename]
 ```
 
-## Building into an executable
+## Building into an executable with a version number
 ```shell
-go build .
+ go build -ldflags "-X main.version=1.0.0" .
 ```
 
 ## Usage
+### Windows
 ```shell
-./hype.exe [filename]
+hype.exe [filename]
+hype.exe --version
+hype.exe [filename] | more 
 ```
+
+### Linux / Mac
+```shell
+./hype [filename]
+./hype --version
+```
+
+## Suggestions
+In the future, we could consider the following:
+* Simplify this right down to reduce imports
+* Allow command line setting of style etc.
+* Allow new defaults to be specified/saved
+* Stop using the 'quick' highlight technique
+* Find a way to process the file incrementally to avoid 'large file' issues
+* Full versioninfo stuff on Windows exe, with a nice icon
+* Some sort of 'more'
+* Seed version info from git tag, if possible on all platforms
