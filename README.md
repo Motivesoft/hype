@@ -18,9 +18,35 @@ The initial design is simple.
 go run . [filename]
 ```
 
-## Building into an executable with a version number
+## Building the executable
+### Version numbering
+Using git tags, it is possible (on Linux builds) to inject the semantic version into a build fairly automatically:
 ```shell
- go build -ldflags "-X main.version=1.0.0" .
+go build -ldflags "-X 'main.version=`git describe --tags`'" .
+```
+
+The following would have been required to set up the tag. The use of `git describe` here is simply to check the outcome
+```shell
+git tag 1.0.0
+git push --tags
+git describe --tags
+```
+
+### Other platforms
+Build for (eg) Windows when on Linux - which is handy for the version/tag injection 
+```shell
+GOOS=windows GOARCH=amd64 go build -ldflags "-X 'main.version=`git describe --tags`'" .
+```
+
+Run the following to get a list of valid platforms and architectures:
+```shell
+go tool list dist  
+```
+
+### Simple test build
+Simplistic method for local testing:
+```shell
+ go build -ldflags "-X main.version=0.0.0" .
 ```
 
 ## Usage
