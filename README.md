@@ -6,12 +6,14 @@ The application is written in Go and uses the [Chroma](github.com/alecthomas/chr
 
 ## Design
 The initial design is simple.
-* Accept a filename on the command line
-* Load it into a string
-* Pass it to the Lexers module to find the appropriate one
-* Use the standard formatter for coloured console output
-* Hard code (initially, at least) the style
-* Write the file to the console with the lexer, formatter and style
+* Accept one or more filenames on the command line, 
+  * or as piped input if no filenames are specified
+* Load the contents into a string
+* Write the content to the console using the capabilities of the `chroma` package
+  * the choice of lexer, formatter and style coming from:
+    * hard-coded defaults 
+    * the name of the loaded file(s)
+    * command line configuration switches
 
 ## Testing
 ```shell
@@ -63,32 +65,41 @@ hype.exe [filename] | more
 ./hype --version
 ```
 
-###
-A configuration file called `.hype` in either of the following locations:
-* Executable directory
-* Home directory
-* Current directory
-
-The configuration file is YAML and takes the following form:
-```yaml
-Style: monokai
+## Configuration
+Configuration is controlled by command line arguments. See
+```shell
+./hype.exe --help
 ```
 
-Formatter and a default Lexer (in the event one cannot be inferred from the filename) can also be specified, but the need for this is unlikely.
-```yaml
-Formatter: terminal16m
-Lexer: markdown
+Configurable items include the formatter, lexer and style. The following can be used to list the available options
+```shell
+./hype.exe --style-list
+./hype.exe --formatter-list
+./hype.exe --lexer-list
+```
+
+### Formatter
+* Typically, the `formatter` will not need configuration unless the output is destined for some other purpose, e.g. to have file(s) rendered as HTML.
+```shell
+hype --formatter html test.cpp
+```
+
+### Lexer
+The `lexer` is determined by the name of the file to be displayed. Typically this is sufficient, but can be overridden on the command line if a different one is required or the input is being piped to the application
+```shell
+./hype.exe --lexer cpp testfile
+type testfile | ./hype.exe -lexer cpp 
 ``` 
+
+### Style
+The `style` has a hard-coded default, but can be overridden
+```shell
+./hype.exe --style monokai test.cpp
+```
 
 ## Suggestions
 In the future, we could consider the following:
-* Simplify this right down to reduce imports
-* Allow command line setting of style etc.
-* Allow new defaults to be specified/saved
-* Stop using the 'quick' highlight technique
 * Find a way to process the file incrementally to avoid 'large file' issues
 * Full versioninfo stuff on Windows exe, with a nice icon
-* Some sort of 'more' capability
-* Other options from 'cat'
-* Seed version info from git tag, if possible on all platforms or by building for all platforms on Linux
-* Multiple files on the command line, output one by one
+* Some sort of `more` or `cat` capability
+* Allow new defaults to be specified/saved
