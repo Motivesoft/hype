@@ -1,5 +1,16 @@
 # hype
-Replacement for the Windows command 'type' (Linux 'cat' command) that displays text files using syntax highlighting
+Replacement for the Windows command 'type' (Linux 'cat' command) that displays text files using syntax highlighting.
+
+Example usage (see [below](#usage) for more):
+```shell
+hype example.cpp
+hype --style=github-dark README.md
+```
+
+## Installation
+Build from source using the [information below](#building-the-executable) or download the appropriate executable for your platform from the [latest release](https://github.com/Motivesoft/hype/releases/latest).
+
+Rename the executable to `hype` (or `hype.exe` on windows) and place it in a location on the system path. Alternately, on systems that support this, leave the executable name as-is and create a link to it that is on the path and uses the name `hype`.
 
 ## Background
 The application is written in Go and uses the [Chroma](github.com/alecthomas/chroma/v2) package.
